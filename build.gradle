@@ -1,0 +1,35 @@
+plugins {
+    id 'java'
+    id 'info.solidsoft.pitest' version '1.3.0'
+}
+
+apply plugin: 'info.solidsoft.pitest'
+
+group 'arraylib'
+version '1.0-SNAPSHOT'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation 'junit:junit:4.12'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.+'
+}
+
+pitest {
+    threads = 4
+    outputFormats = ['XML', 'HTML']
+    timestampedReports = false
+}
+
+sourceSets {
+    test {
+        java.srcDir file('src/test/java')
+        resources.srcDir file('src/test/resources')
+        compileClasspath += sourceSets.main.output + configurations.testRuntimeClasspath
+        runtimeClasspath += output + compileClasspath
+    }
+}

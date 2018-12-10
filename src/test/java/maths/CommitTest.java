@@ -1,10 +1,14 @@
 package maths;
 
+import org.junit.jupiter.api.Test;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.Arrays;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -38,8 +42,8 @@ public class CommitTest {
 
     @Test
     public void constructor() {
-        Commit Commit = new Commit();
-        assertNotNull(Commit);
+        Commit commit = new Commit();
+        assertNotNull(commit);
     }
 
     @Test
@@ -129,7 +133,7 @@ public class CommitTest {
         double sum = 0;
         for (double d: duplicateNumbers)
             sum += d;
-        assertTrue(Commit.sum(duplicateNumbers) == sum);
+        assertEquals(Commit.sum(duplicateNumbers), sum);
     }
 
     @Test
@@ -185,11 +189,34 @@ public class CommitTest {
         assertEquals(5, tc2.length);
     }
 
-    @Test
-    public void distance() {
+    private static Stream<Arguments> distanceParameterProvider() {
+        return Stream.of(
+                Arguments.of(0, new double[]{}, new double[]{}),
+                Arguments.of(0, new double[]{0, 1}, new double[]{0, 1}),
+
+                Arguments.of(1, new double[]{1, 1}, new double[]{0, 1}),
+                Arguments.of(1, new double[]{1, 1}, new double[]{1, 0})
+        );
     }
 
-    @Test
-    public void arrayDeviation() {
+    @ParameterizedTest(name = "{index} => expected={0} array1={1} array2={2}")
+    @MethodSource("distanceParameterProvider")
+    public void distance(Number expected, double[] array1, double[] array2){
+        assertEquals(expected.doubleValue(), Commit.distance(array1, array2));
+    }
+
+    private static Stream<Arguments> arrayDeviationProvider() {
+        return Stream.of(
+                Arguments.of(null, new double[]{}),
+                Arguments.of(new double[]{0, 0}, new double[]{1, 1}),
+                Arguments.of(new double[]{0.5, 0.5}, new double[]{0, 1}),
+                Arguments.of(new double[]{0.5, 0.5}, new double[]{1, 0})
+        );
+    }
+
+    @ParameterizedTest(name = "{index} => expected={0} input1={1}")
+    @MethodSource("arrayDeviationProvider")
+    public void arrayDeviation(double[] expected, double[] input){
+        assertArrayEquals(expected, Commit.arrayDeviation(input));
     }
 }
